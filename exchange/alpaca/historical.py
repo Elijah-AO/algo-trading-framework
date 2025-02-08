@@ -2,6 +2,7 @@ from alpaca.data.historical import (
     CryptoHistoricalDataClient,
     OptionHistoricalDataClient,
     StockHistoricalDataClient,
+    NewsClient,
 )
 from alpaca.data.timeframe import TimeFrame
 from datetime import datetime
@@ -20,6 +21,7 @@ class AlpacaHistoricalClient:
         self.stock_client = StockHistoricalDataClient(api_key, api_secret)
         self.crypto_client = CryptoHistoricalDataClient(api_key, api_secret)
         self.option_client = OptionHistoricalDataClient(api_key, api_secret)
+        self.news_client = NewsClient(api_key, api_secret)
 
     def get_historical_data(
         self,
@@ -50,10 +52,18 @@ class AlpacaHistoricalClient:
             end=end,
         )
 
+        if (
+            event_type == MarketEventType.NEWS
+            and market_data_type == MarketDataType.NEWS
+        ):
+            request_params.limit = 50
+            return self.news_client.get_news(request_params).df
+
         client_attr = HISTORICAL_CLIENT_MAPPING[market_data_type]
         client = getattr(self, client_attr)
 
         method_name = f"get_{market_data_type.value}_{event_type.value}s"
+
         if not hasattr(client, method_name):
             raise NotImplementedError(
                 f"{client_attr} does not support {event_type.value} data."

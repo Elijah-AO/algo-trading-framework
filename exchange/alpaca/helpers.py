@@ -8,6 +8,7 @@ from alpaca.data.requests import (
     CryptoTradesRequest,
     OptionBarsRequest,
     OptionTradesRequest,
+    NewsRequest,
 )
 
 
@@ -23,6 +24,7 @@ class MarketEventType(Enum):
     QUOTE = "quote"
     BAR = "bar"
     TRADE = "trade"
+    NEWS = "news"
 
 
 HISTORICAL_REQUEST_CLASSES = {
@@ -40,12 +42,14 @@ HISTORICAL_REQUEST_CLASSES = {
         MarketEventType.BAR: OptionBarsRequest,
         MarketEventType.TRADE: OptionTradesRequest,
     },
+    MarketDataType.NEWS: {MarketEventType.NEWS: NewsRequest},
 }
 
 HISTORICAL_CLIENT_MAPPING = {
     MarketDataType.STOCK: "stock_client",
     MarketDataType.CRYPTO: "crypto_client",
     MarketDataType.OPTION: "option_client",
+    MarketDataType.NEWS: "news_client",
 }
 
 REQUEST_LIMIT = 1000
