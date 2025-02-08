@@ -11,7 +11,7 @@ from exchange.alpaca.helpers import (
     MarketDataType,
     MarketEventType,
     HISTORICAL_REQUEST_CLASSES,
-    HISTORICAL_CLIENT_MAPPING,
+    CLIENT_MAPPING,
     REQUEST_LIMIT,
 )
 
@@ -26,7 +26,7 @@ class AlpacaHistoricalClient:
     def get_historical_data(
         self,
         market_data_type: MarketDataType,
-        event_type: MarketEventType,
+        market_event_type: MarketEventType,
         symbols: list[str],
         timeframe: TimeFrame,
         start: datetime,
@@ -37,12 +37,12 @@ class AlpacaHistoricalClient:
                 f"Market data type '{market_data_type.value}' is not supported."
             )
 
-        if event_type not in HISTORICAL_REQUEST_CLASSES[market_data_type]:
+        if market_event_type not in HISTORICAL_REQUEST_CLASSES[market_data_type]:
             raise NotImplementedError(
-                f"'{event_type.value}' data is not available for {market_data_type.value}."
+                f"Historical '{market_event_type.value}' data is not available for {market_data_type.value}."
             )
 
-        request_class = HISTORICAL_REQUEST_CLASSES[market_data_type][event_type]
+        request_class = HISTORICAL_REQUEST_CLASSES[market_data_type][market_event_type]
 
         request_params = request_class(
             symbol_or_symbols=symbols,
@@ -53,20 +53,20 @@ class AlpacaHistoricalClient:
         )
 
         if (
-            event_type == MarketEventType.NEWS
+            market_event_type == MarketEventType.NEWS
             and market_data_type == MarketDataType.NEWS
         ):
             request_params.limit = 50
             return self.news_client.get_news(request_params).df
 
-        client_attr = HISTORICAL_CLIENT_MAPPING[market_data_type]
+        client_attr = CLIENT_MAPPING[market_data_type]
         client = getattr(self, client_attr)
 
-        method_name = f"get_{market_data_type.value}_{event_type.value}s"
+        method_name = f"get_{market_data_type.value}_{market_event_type.value}s"
 
         if not hasattr(client, method_name):
             raise NotImplementedError(
-                f"{client_attr} does not support {event_type.value} data."
+                f"{client_attr} does not support {market_event_type.value} data."
             )
 
         method = getattr(client, method_name)
