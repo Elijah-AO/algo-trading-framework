@@ -30,10 +30,6 @@ class AlpacaLatestClient:
         market_data_type: MarketDataType,
         market_event_type: MarketEventType,
         symbols: list[str],
-        timeframe: TimeFrame,
-        start: datetime,
-        end: datetime,
-        limit: Optional[int] = None,
     ) -> DataFrame:
         if market_data_type not in LATEST_REQUEST_CLASSES:
             raise NotImplementedError(
@@ -49,10 +45,6 @@ class AlpacaLatestClient:
 
         request_params = request_class(
             symbol_or_symbols=symbols,
-            timeframe=timeframe if timeframe else None,
-            limit=limit,
-            start=start,
-            end=end,
         )
 
         client_attr = CLIENT_MAPPING[market_data_type]
