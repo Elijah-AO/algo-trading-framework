@@ -11,20 +11,29 @@ from exchange.alpaca.helpers import (
     CLIENT_MAPPING,
     LIVE_REQUEST_CLASSES,
 )
-from typing import List, Tuple, Awaitable, Callable
+from typing import List
+
+from strategy.strategy import Strategy
 
 
+# TODO: Create live client interface
 class AlpacaLiveClient:
     def __init__(self, api_key: str, api_secret: str) -> None:
         self.crypto_client = CryptoDataStream(api_key, api_secret)
         self.option_client = OptionDataStream(api_key, api_secret)
         self.news_client = NewsDataStream(api_key, api_secret)
         self.stock_client = StockDataStream(api_key, api_secret)
+        self.strategies: List[Strategy]
+        self.strategies = []
 
     async def on_data(self, data) -> None:
-        print(data)
+        for strategy in self.strategies:
+            strategy.on_market_data(data)
 
-    def subscribe(
+    def subscribe_strategies(self, strategies: List[Strategy]):
+        self.strategies.extend(strategies)
+
+    def subscribe_symbols(
         self,
         market_data_type: MarketDataType,
         market_event_type: MarketEventType,
