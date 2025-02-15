@@ -16,6 +16,7 @@ class SMA(Strategy):
         short_period: int,
         long_period: int,
         instrument: Instrument,
+        backtesting: bool = False,
     ) -> None:
         super().__init__(executor)
         self.short_sma = deque(maxlen=short_period)
@@ -42,9 +43,9 @@ class SMA(Strategy):
             return
 
         if short_mean > long_mean:
-            self.send_order(Signal.BUY)
+            self.send_order(Signal.BUY, data.close)
         elif short_mean < long_mean:
-            self.send_order(Signal.SELL)
+            self.send_order(Signal.SELL, data.close)
 
-    def send_order(self, signal: Signal) -> None:
-        return self.executor.submit_order(signal, self.instrument)
+    def send_order(self, signal: Signal, signal_price: float) -> None:
+        return self.executor.submit_order(signal, self.instrument, signal_price)

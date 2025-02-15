@@ -13,5 +13,5 @@ class Strategy(ABC):
         pass
 
     @abstractmethod
-    def send_order(self, signal: Signal):
+    def send_order(self, signal: Signal, signal_price: float):
         pass

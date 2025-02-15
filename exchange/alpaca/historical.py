@@ -18,10 +18,11 @@ from exchange.alpaca.helpers import (
     CLIENT_MAPPING,
     REQUEST_LIMIT,
 )
+from exchange.historical_client import HistoricalClient
 
 
 # TODO: Create historical client interface
-class AlpacaHistoricalClient:
+class AlpacaHistoricalClient(HistoricalClient):
     def __init__(self, api_key: str, api_secret: str) -> None:
         auth = api_key, api_secret
         self.stock_client = StockHistoricalDataClient(*auth)
@@ -78,4 +79,4 @@ class AlpacaHistoricalClient:
 
         bars = method(request_params)
 
-        return bars.df
+        return bars
