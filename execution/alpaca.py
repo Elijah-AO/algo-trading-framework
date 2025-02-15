@@ -16,7 +16,9 @@ class AlpacaExecutor(Executor):
     ):
         super().__init__(trading_client, latest_client)
 
-    def submit_order(self, signal: Signal, instrument: Instrument) -> None:
+    def submit_order(
+        self, signal: Signal, instrument: Instrument, signal_price: float
+    ) -> None:
         """Executes an order based on signal and available balance."""
         print("submitting order")
 

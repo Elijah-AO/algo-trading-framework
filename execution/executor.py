@@ -14,5 +14,5 @@ class Executor(ABC):
         self.latest_client = latest_client
 
     @abstractmethod
-    def submit_order(self, signal: Signal, instrument: Instrument):
+    def submit_order(self, signal: Signal, instrument: Instrument, signal_price: float):
         pass
